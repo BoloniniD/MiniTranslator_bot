@@ -7,6 +7,7 @@ import telebot
 
 class TranslatorBot:
     def __init__(self):
+        self.all_langs = str(googletrans.LANGUAGES).replace(', ', '\n').replace("'", "")[1:-1]
         self.configuring = False
         self.deleting = False
         cfg = open('token.txt', 'r')
@@ -42,6 +43,28 @@ class TranslatorBot:
             print("Received add_config message")
             self.configuring = True
             self.bot.reply_to(message, "Choose a source language and destination language.\nNow you can write messages with 'src:dest' to add new translation configs, where src is source language and dest is target language.\nFor example, en:fr.")
+
+        @self.bot.message_handler(commands=['all_langs'])
+        def showLangsBot(message):
+            print("Received all_langs message")
+            self.bot.reply_to(message, "I will send you all supported languages")
+            try:
+                self.bot.send_message(message.from_user.id, self.all_langs)
+            except:
+                print("Failed to send the message to used", message.from_user.id)
+                self.bot.reply_to(message, "Failed to send you a PM. Please, check if you have blocked the bot.")
+
+        @self.bot.message_handler(commands=['show_config'])
+        def showConfigBot(message):
+            print("Received show_config message")
+            if not message.chat.id in self.groups:
+                self.bot.reply_to(message, "No configuration pairs in this chat. Nothing to delete.")
+                return
+            if not bool(self.groups[message.chat.id]):
+                self.bot.reply_to(message, "No configuration pairs in this chat. Nothing to delete.")
+                return
+            s = ', '.join([':'.join((k, str(self.groups[message.chat.id][k]))) for k in sorted(self.groups[message.chat.id], key=self.groups[message.chat.id]. get, reverse=True)])
+            self.bot.reply_to(message, "All configuration pairs: " + s + ".")
 
         @self.bot.message_handler(commands=['rm_config'])
         def delConfigBot(message):
@@ -81,6 +104,12 @@ class TranslatorBot:
             langs = message.text.split(':')
             langs[0] = langs[0].lower()
             langs[1] = langs[1].lower()
+            if not (langs[0] in googletrans.LANGUAGES):
+                self.bot.reply_to(message, "Incorrect language " + langs[0])
+                return
+            if not (langs[1] in googletrans.LANGUAGES):
+                self.bot.reply_to(message, "Incorrect language " + langs[1])
+                return
             if not message.chat.id in self.groups:
                 self.groups[message.chat.id] = {}
             self.groups[message.chat.id][langs[0]] = langs[1]
