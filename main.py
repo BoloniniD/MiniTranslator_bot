@@ -33,10 +33,20 @@ class TranslatorBot:
 
         self.loadConfig()
 
-        @self.bot.message_handler(commands=['start', 'help'])
+        @self.bot.message_handler(commands=['start'])
         def startBot(message):
-            print("Received start/help message")
-            self.bot.reply_to(message, "This bot will translate all user messages in this chat.\nYou can configure which languages need to be translated and what the target language should be with /add_config command.")
+            print("Received help message")
+            self.bot.reply_to(message, "This bot will translate all user messages in this chat.\nYou can configure which languages need to be translated and what the target language should be with /add_config command.\nUse /help to see other commands.")
+
+        @self.bot.message_handler(commands=['help'])
+        def startBot(message):
+            print("Received help message")
+            self.bot.reply_to(message, '''This bot has the following commands:
+/start - starting message
+/help - this help page
+/add_config - add a langauge pair src:dest, where src - is source language and dest is target language. For src and dest you should use language codes, which can be aquired with /all_langs command.
+/all_langs - bot will send you a PM with all supported languages
+/rm_config - this command will list all present configuration pairs and will wait a src:dest pair, which will be deleted from config''')
            
         @self.bot.message_handler(commands=['add_config'])
         def addConfigBot(message):
