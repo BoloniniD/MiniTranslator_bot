@@ -5,7 +5,6 @@ import sys
 import googletrans
 import telebot
 
-
 class TranslatorBot:
     def __init__(self):
         self.all_langs = (

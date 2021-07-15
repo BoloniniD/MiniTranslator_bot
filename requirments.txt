@@ -1,0 +1,2 @@
+googletrans==4.0.1rc1
+pytelegrambotapi==3.8.1
