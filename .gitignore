@@ -1,2 +1,5 @@
 token.txt
-chat_cfg.cfg
+langs_cfg.cfg
+enabled_cfg.cfg
+confstate_cfg.cfg
+delstate_cfg.cfg
